@@ -1,29 +1,26 @@
 import Modal from 'components/Modal/Modal';
-import React, { Component } from 'react';
+import { useState } from "react";
 
-// import PropTypes from 'prop-types';
+const ImageGalleryItem = ({ Card }) => {
 
-export default class ImageGalleryItem extends Component {
-    state = {
-    isModalShow: false
-  }
+    const [isModalShow, setIsModalShow] = useState(false)
 
-    toggleModal = () => {
-        this.setState(prevState => ({ isModalShow: !prevState.isModalShow }));
-        console.log(this.state.isModalShow)
+    const toggleModal = () => {
+        setIsModalShow(prevState => !prevState);
     }
 
-    render() {
-        const { id, webformatURL, largeImageURL, tags } = this.props.Card;
-        return (
-            <li className='ImageGalleryItem' key={id}>
-                <img className='ImageGalleryItem-image'
-                    src={webformatURL} alt={tags}
-                    onClick={this.toggleModal}
-                />
-                {this.state.isModalShow &&
-                    <Modal URL={largeImageURL} alt={tags} closeModal={this.toggleModal} />}
-            </li>
-        );
-    }
+    const { id, webformatURL, largeImageURL, tags } = Card;
+
+    return (
+        <li className='ImageGalleryItem' key={id}>
+            <img className='ImageGalleryItem-image'
+                src={webformatURL} alt={tags}
+                onClick={toggleModal}
+            />
+            {isModalShow &&
+                <Modal URL={largeImageURL} alt={tags} closeModal={toggleModal} />}
+        </li>
+    );
 }
+
+export default ImageGalleryItem;

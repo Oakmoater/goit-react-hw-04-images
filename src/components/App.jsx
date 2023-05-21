@@ -1,42 +1,37 @@
-import React, { Component } from "react";
+import { useState, useEffect } from "react";
 import Searchbar from "./Searchbar/Searchbar";
 import { getImages } from "API/getSearchImages";
 import ImageGallery from "./ImageGallery/ImageGallery";
 
 
-export class App extends Component {
-  state = {
-    galleryItems: [],
-    query: ''
-  }
+export const App = () => {
 
-  searchHandler = (e) => {
+  const [galleryItems, setGalleryItems] = useState([])
+  const [query, setQuery] = useState('')
+
+  const searchHandler = (e) => {
     e.preventDefault();
     const { input } = e.target.elements
-    this.setState({ query: input.value })
+    setQuery(input.value )
     getImages(input.value, 1)
       .then(({ hits }) => {
-        this.setState({ galleryItems: hits });
+        setGalleryItems( hits );
     })
     .catch(er => console.log(er));
   }
 
-  loadMoreHandler = () => {
-    getImages(this.state.query, this.state.galleryItems.length / 12 + 1)
+  const loadMoreHandler = () => {
+    getImages(query, galleryItems.length / 12 + 1)
       .then(({ hits }) => {
-        this.setState(prevState => ({
-          galleryItems: [...prevState.galleryItems, ...hits]
-        }));
+        setGalleryItems(prevState => [...prevState, ...hits])
       })
     .catch(er => console.log(er));
   }
 
-  render()  {
-    return (
-      <div>
-        <Searchbar onSubmit={this.searchHandler} />
-        <ImageGallery Images={this.state.galleryItems} loadMoreHandler={this.loadMoreHandler} />
-      </div>
-    );
-  }
+  return (
+    <div>
+      <Searchbar onSubmit={searchHandler} />
+      <ImageGallery Images={galleryItems} loadMoreHandler={loadMoreHandler} />
+    </div>
+  );
 };
